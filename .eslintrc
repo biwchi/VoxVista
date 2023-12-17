@@ -1,0 +1,54 @@
+{
+  "root": true,
+  "env": {
+    "browser": true
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/*.vue"
+      ],
+      "extends": [
+        "@nuxt/eslint-config",
+        "plugin:perfectionist/recommended-natural",
+        "plugin:sonarjs/recommended",
+        "@vue/eslint-config-prettier/skip-formatting",
+        "@vue/eslint-config-typescript",
+        "plugin:tailwindcss/recommended"
+      ],
+      "rules": {
+        "vue/no-multiple-template-root": "off",
+        "perfectionist/sort-vue-attributes": "off"
+      }
+    },
+    {
+      "parserOptions": {
+        "sourceType": "module",
+        "ecmaVersion": "latest"
+      },
+      "extends": [
+        "eslint:recommended",
+        "plugin:perfectionist/recommended-natural",
+        "plugin:perfectionist/recommended-line-length",
+        "plugin:sonarjs/recommended"
+      ],
+      "plugins": [
+        "perfectionist",
+        "sonarjs",
+        "@typescript-eslint"
+      ],
+      "files": [
+        "**/*.ts"
+      ],
+      "excludedFiles": [
+        "./nuxt",
+        "./node_modules"
+      ],
+      "parser": "@typescript-eslint/parser",
+      "rules": {
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": "error"
+      }
+    }
+  ]
+}
