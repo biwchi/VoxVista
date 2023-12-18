@@ -1,8 +1,10 @@
 <script setup lang="ts">
 type Props = {
+  endPlaceholder?: string
   label?: string
   name?: string
   range?: boolean
+  startPlaceholder?: string
   timeRange?: boolean
 }
 
