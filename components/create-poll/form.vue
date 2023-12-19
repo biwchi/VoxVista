@@ -12,6 +12,8 @@ const newOption = ref('')
 const scheduled = ref(false)
 
 const errors = useFormErrors<CreatePollForm>()
+const values = useFormValues<CreatePollForm>()
+
 const { fields, push, remove } = useFieldArray<string>('options')
 
 // It needs because of bad typing in errors object
@@ -32,6 +34,8 @@ function removeField(idx: number) {
 
   remove(idx)
 }
+
+watch(scheduled, () => (values.value.date = undefined))
 </script>
 
 <template>
@@ -66,20 +70,17 @@ function removeField(idx: number) {
     <div class="flex gap-2">
       <AppCheckbox name="anonymous"> Anonymous poll </AppCheckbox>
       <AppCheckbox name="multiple"> Allow multiple choices </AppCheckbox>
-      <AppCheckbox v-model="scheduled" name="scheduled">
-        Schedule poll
-      </AppCheckbox>
+      <AppCheckbox v-model="scheduled"> Schedule poll </AppCheckbox>
     </div>
 
-    <div class="flex gap-4">
-      <AppDatePicker
-        placeholder="Select date"
-        start-placeholder="Start date"
-        end-placeholder="End date"
-        :time-range="scheduled"
-        :label="scheduled ? 'Range' : 'End date'"
-        name="date"
-      />
-    </div>
+    <AppDatePicker
+      placeholder="Select date"
+      start-placeholder="Start date"
+      end-placeholder="End date"
+      :time-range="scheduled"
+      :time="!scheduled"
+      :label="scheduled ? 'Range' : 'End date'"
+      name="date"
+    />
   </ElForm>
 </template>

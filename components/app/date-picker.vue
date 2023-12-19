@@ -5,21 +5,24 @@ type Props = {
   name?: string
   range?: boolean
   startPlaceholder?: string
+  time?: boolean
   timeRange?: boolean
 }
 
 const props = defineProps<Props>()
 
 const type = computed(() => {
-  if(props.range) {
+  if (props.range) {
     return 'daterange'
   }
 
-  if(props.timeRange) {
+  if (props.timeRange) {
     return 'datetimerange'
   }
 
-
+  if(props.time) {
+    return 'datetime'
+  }
 })
 
 const { errorMessage, handleChange, value } = useField<Date>(props.name ?? '')
@@ -32,6 +35,8 @@ const { errorMessage, handleChange, value } = useField<Date>(props.name ?? '')
         class="!w-full"
         :model-value="value"
         :type="type"
+        :start-placeholder="startPlaceholder"
+        :end-placeholder="endPlaceholder"
         v-bind="$attrs"
         @update:model-value="handleChange"
       />

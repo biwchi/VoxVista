@@ -2,8 +2,8 @@
 type Props = {
   comments: number
   description: string
-  isLive: boolean
   likes: number
+  live: boolean
   title: string
 }
 
@@ -21,7 +21,7 @@ const info = [
       <h1 class="text-2xl font-semibold">{{ title }}</h1>
 
       <span
-        v-if="isLive"
+        v-if="live"
         class="animate-pulse rounded-full bg-primary-500 px-4 py-2 text-sm font-medium text-white"
       >
         LIVE
@@ -42,7 +42,7 @@ const info = [
     </ul>
 
     <div class="flex justify-between">
-      <ElButton>Vote</ElButton>
+      <NuxtLink to="poll/1"><ElButton>Vote</ElButton></NuxtLink>
       <ElButton type="primary">Share</ElButton>
     </div>
   </ElCard>

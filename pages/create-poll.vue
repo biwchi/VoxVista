@@ -20,19 +20,17 @@ const onSubmit = handleSubmit(async (values) => {
 </script>
 
 <template>
-  <div class="m-auto max-w-2xl">
-    <ElCard shadow="never">
-      <template #header>
-        <h1 class="text-2xl font-medium">Create a new poll</h1>
-      </template>
+  <ElCard shadow="never">
+    <template #header>
+      <h1 class="text-2xl font-medium">Create a new poll</h1>
+    </template>
 
-      <CreatePollForm/>
+    <CreatePollForm />
 
-      <template #footer>
-        <ElButton class="w-full" type="primary" @click="onSubmit">
-          Create poll
-        </ElButton>
-      </template>
-    </ElCard>
-  </div>
+    <template #footer>
+      <ElButton class="w-full" type="primary" @click="onSubmit">
+        Create poll
+      </ElButton>
+    </template>
+  </ElCard>
 </template>
