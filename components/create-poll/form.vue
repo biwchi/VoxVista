@@ -70,7 +70,7 @@ watch(scheduled, () => (values.value.date = undefined))
     <div class="flex gap-2">
       <AppCheckbox name="anonymous"> Anonymous poll </AppCheckbox>
       <AppCheckbox name="multiple"> Allow multiple choices </AppCheckbox>
-      <AppCheckbox v-model="scheduled"> Schedule poll </AppCheckbox>
+      <ElCheckbox v-model="scheduled"> Schedule poll </ElCheckbox>
     </div>
 
     <AppDatePicker

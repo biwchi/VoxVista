@@ -1,5 +1,6 @@
 <script setup lang="ts">
 export type Option = {
+  isChosen?: boolean
   label: string
   value: string
   votes: number
@@ -8,14 +9,22 @@ export type Option = {
 type Props = {
   multiple?: boolean
   options: Option[]
-  voted?: Option[]
+  voted?: boolean
 }
 
 const props = defineProps<Props>()
 const modelValue = defineModel<Option | Option[]>()
 
-const userVotes = computed(() => {
-  props.options.map((o) => {})
+const totalVotes = computed(() => {
+  return props.options.reduce((acc, opt) => acc + opt.votes, 0)
+})
+
+const optionsWithPercentenge = computed(() => {
+  return props.options.map((option) => {
+    const percentenge = Math.round((option.votes / totalVotes.value) * 100)
+
+    return { ...option, percentenge }
+  })
 })
 
 function isOptionSelected(option: Option) {
@@ -59,7 +68,7 @@ function selectOption(option: Option) {
 
 <template>
   <div class="flex flex-col gap-2">
-    <template v-if="!props.voted?.length">
+    <template v-if="!props.voted">
       <PollOptionsItem
         v-for="option in props.options"
         :key="option.value"
@@ -70,9 +79,11 @@ function selectOption(option: Option) {
     </template>
 
     <template v-else>
-      <div v-for="option in props.voted" :key="option.value">
-        <span>{{ option.label }}</span>
-      </div>
+      <PollOptionsResultItem
+        v-for="option in optionsWithPercentenge"
+        :key="option.value"
+        :option="option"
+      />
     </template>
   </div>
 </template>

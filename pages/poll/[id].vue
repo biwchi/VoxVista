@@ -5,18 +5,18 @@ type Poll = {
   comments: number
   description: string
   id: number
-  multiple: boolean
+  isMultiple: boolean
+  isVoted?: boolean
   options: Option[]
   stars: number
   title: string
-  voted?: Option[]
   votes: number
 }
 
 const options: Option[] = [
-  { label: 'Option 1', value: 'option-1', votes: 100 },
-  { label: 'Option 2', value: 'option-2', votes: 100 },
-  { label: 'Option 3', value: 'option-3', votes: 100 },
+  { isChosen: true, label: 'Option 1', value: 'option-1', votes: 53 },
+  { label: 'Option 2', value: 'option-2', votes: 11 },
+  { label: 'Option 3', value: 'option-3', votes: 23 },
 ]
 
 const selectedOption = ref<Option | Option[]>()
@@ -25,7 +25,7 @@ const poll = ref<Poll>({
   comments: 1,
   description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
   id: 1,
-  multiple: true,
+  isMultiple: true,
   options,
   stars: 10,
   title: 'My Poll',
@@ -33,9 +33,24 @@ const poll = ref<Poll>({
 })
 
 const stats = computed(() => [
-  { icon: ElIconCheck, label: 'Votes', value: poll.value.votes },
-  { icon: ElIconChatRound, label: 'Comments', value: poll.value.comments },
-  { icon: ElIconStar, label: 'Stars', value: poll.value.stars },
+  {
+    color: '!text-blue-500',
+    icon: ElIconCheck,
+    label: 'Votes',
+    value: poll.value.votes,
+  },
+  {
+    color: '!text-blue-500',
+    icon: ElIconChatRound,
+    label: 'Comments',
+    value: poll.value.comments,
+  },
+  {
+    color: '!text-yellow-500',
+    icon: ElIconStar,
+    label: 'Stars',
+    value: poll.value.stars,
+  },
 ])
 
 function vote() {
@@ -43,11 +58,19 @@ function vote() {
     return
   }
 
-  const optionLabels = Array.isArray(selectedOption.value)
-    ? selectedOption.value.map((o) => o.label)
-    : [selectedOption.value.label]
+  // prettier-ignore
+  const selected = Array.isArray(selectedOption.value) ? selectedOption.value : [selectedOption.value]
+  const selectedLables = selected.map((s) => s.label)
 
-  ElNotification.success(`Voted for ${optionLabels.join(', ')}!`)
+  ElNotification.success(`Voted for ${selectedLables.join(', ')}!`)
+
+  poll.value.isVoted = true
+  poll.value.options = poll.value.options.map((option) => {
+    option.isChosen = selected.includes(option)
+    option.votes += option.isChosen ? 1 : 0
+
+    return option
+  })
 }
 </script>
 
@@ -59,25 +82,31 @@ function vote() {
     <div class="flex flex-col gap-4">
       <PollOptions
         v-model="selectedOption"
-        :multiple="poll.multiple"
-        :voted="poll.voted"
+        :voted="poll.isVoted"
         :options="poll.options"
       />
 
-      <ElButton :disabled="!selectedOption" type="primary" @click="vote">
+      <ElButton :disabled="!selectedOption || poll.isVoted" type="primary" @click="vote">
         Vote
       </ElButton>
 
-      <ul class="flex gap-2 text-lg">
+      <ul class="flex gap-4 text-lg">
         <li
           v-for="stat in stats"
           :key="stat.label"
           class="flex items-center gap-2"
+          :class="stat.label == 'Stars' && 'flex-auto justify-end'"
         >
-          <ElIcon><component :is="stat.icon" /></ElIcon>
+          <ElIcon :class="stat.color"><component :is="stat.icon" /></ElIcon>
           <span>{{ stat.label }}: {{ stat.value }}</span>
         </li>
       </ul>
+
+      <div class="space-y-2">
+        <h1 class="text-xl font-medium">Comments</h1>
+
+        <PollComment/>
+      </div>
     </div>
   </div>
 </template>

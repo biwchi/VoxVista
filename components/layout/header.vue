@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const route = useRoute()
 const isTop = ref(false)
 
 const links = [
@@ -6,6 +7,10 @@ const links = [
   { title: 'Explore polls', to: '/explore-polls' },
   { title: 'My polls', to: '/my-polls' },
 ]
+
+const isCurrent = (path: string) => {
+  return route.path === path ? 'primary' : 'default'
+}
 </script>
 
 <template>
@@ -18,7 +23,9 @@ const links = [
           <ul class="flex items-center justify-between gap-3">
             <li v-for="(link, idx) in links" :key="idx">
               <NuxtLink :to="link.to">
-                <ElButton size="large">{{ link.title }}</ElButton>
+                <ElButton :type="isCurrent(link.to)" size="large">
+                  {{ link.title }}
+                </ElButton>
               </NuxtLink>
             </li>
           </ul>
