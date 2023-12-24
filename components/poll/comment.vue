@@ -11,7 +11,7 @@
     </div>
 
     <div>
-      <h1 class="text-xl font-medium">User</h1>
+      <h1 class="text-lg">User</h1>
 
       <p class="text-sm text-gray-500">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse, incidunt

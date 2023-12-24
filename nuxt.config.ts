@@ -14,6 +14,9 @@ export default defineNuxtConfig({
       tailwindcss: {},
     },
   },
+  runtimeConfig: {
+    baseURL: process.env.NUXT_BASE_URL,
+  },
   veeValidate: {
     autoImports: true,
   },
