@@ -16,6 +16,18 @@ const { handleSubmit } = useForm<CreatePollForm>({
 
 const onSubmit = handleSubmit(async (values) => {
   console.log(values)
+
+  const startDate = values.dates && values.dates[0]
+  const endDate = values.dates && values.dates[1]
+
+  const data = {
+    ...values,
+    endDate,
+    options: values.options.map((option) => ({ label: option })),
+    startDate,
+  }
+
+  useFetch('/api/poll', { body: data, method: 'post' })
 })
 </script>
 

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 export type CreatePollForm = {
-  anonymous: boolean
-  date?: [Date, Date] | Date
+  dates: [Date, Date] | [Date]
   description: string
-  multiple: boolean
+  isAnonymous: boolean
+  isMultiple: boolean
   options: string[]
   title: string
 }
@@ -35,7 +35,7 @@ function removeField(idx: number) {
   remove(idx)
 }
 
-watch(scheduled, () => (values.value.date = undefined))
+watch(scheduled, () => (values.value.dates = undefined))
 </script>
 
 <template>
@@ -68,8 +68,8 @@ watch(scheduled, () => (values.value.date = undefined))
     </div>
 
     <div class="flex gap-2">
-      <AppCheckbox name="anonymous"> Anonymous poll </AppCheckbox>
-      <AppCheckbox name="multiple"> Allow multiple choices </AppCheckbox>
+      <AppCheckbox name="isAnonymous"> Anonymous poll </AppCheckbox>
+      <AppCheckbox name="isMultiple"> Allow multiple choices </AppCheckbox>
       <ElCheckbox v-model="scheduled"> Schedule poll </ElCheckbox>
     </div>
 
@@ -80,7 +80,7 @@ watch(scheduled, () => (values.value.date = undefined))
       :time-range="scheduled"
       :time="!scheduled"
       :label="scheduled ? 'Range' : 'End date'"
-      name="date"
+      name="dates"
     />
   </ElForm>
 </template>

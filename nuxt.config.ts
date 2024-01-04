@@ -7,6 +7,7 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@element-plus/nuxt',
     '@vee-validate/nuxt',
+    '@pinia/nuxt',
   ],
   postcss: {
     plugins: {

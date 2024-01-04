@@ -2,11 +2,16 @@
 const route = useRoute()
 const isTop = ref(false)
 
+const userStore = useUserStore()
+
 const links = [
   { title: 'Create poll', to: '/create-poll' },
   { title: 'Explore polls', to: '/explore-polls' },
   { title: 'My polls', to: '/my-polls' },
 ]
+
+const [isLoginModal, toggleLoginModal] = useToggle(false)
+const [isRegisterModal, toggleRegisterModal] = useToggle(false)
 
 const isCurrent = (path: string) => {
   return route.path === path ? 'primary' : 'default'
@@ -30,11 +35,19 @@ const isCurrent = (path: string) => {
             </li>
           </ul>
 
-          <div class="flex items-center">
-            <ElAvatar>User</ElAvatar>
+          <div v-if="userStore.isAuthenticated" class="flex items-center">
+            <ElAvatar>{{}}</ElAvatar>
+          </div>
+
+          <div v-else>
+            <ElButton type="primary" @click="toggleLoginModal()">Login</ElButton>
+            <ElButton @click="toggleRegisterModal()">Register</ElButton>
           </div>
         </div>
       </div>
     </ElAffix>
+
+    <LayoutLoginModal v-model="isLoginModal"/>
+    <LayoutRegisterModal v-model="isRegisterModal"/>
   </header>
 </template>
