@@ -35,19 +35,34 @@ const isCurrent = (path: string) => {
             </li>
           </ul>
 
-          <div v-if="userStore.isAuthenticated" class="flex items-center">
-            <ElAvatar>{{}}</ElAvatar>
+          <div v-if="userStore.isAuthenticated" class="flex items-center gap-2">
+            <div class="flex flex-col">
+              <span class="text-sm font-medium leading-none">{{
+                userStore.nickname
+              }}</span>
+              <span class="text-xs text-gray-500">{{ userStore.email }}</span>
+            </div>
+            <ElAvatar :icon="ElIconUserFilled" />
+            <ElButton
+              type="danger"
+              :icon="ElIconSwitchButton"
+              circle
+              size="large"
+              @click="userStore.logout()"
+            />
           </div>
 
           <div v-else>
-            <ElButton type="primary" @click="toggleLoginModal()">Login</ElButton>
+            <ElButton type="primary" @click="toggleLoginModal()">
+              Login
+            </ElButton>
             <ElButton @click="toggleRegisterModal()">Register</ElButton>
           </div>
         </div>
       </div>
     </ElAffix>
 
-    <LayoutLoginModal v-model="isLoginModal"/>
-    <LayoutRegisterModal v-model="isRegisterModal"/>
+    <LayoutLoginModal v-model="isLoginModal" />
+    <LayoutRegisterModal v-model="isRegisterModal" />
   </header>
 </template>

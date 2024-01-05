@@ -1,6 +1,5 @@
 import { defineNuxtConfig } from 'nuxt/config'
 
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: [
     '@vueuse/nuxt',
@@ -9,14 +8,16 @@ export default defineNuxtConfig({
     '@vee-validate/nuxt',
     '@pinia/nuxt',
   ],
+  runtimeConfig: {
+    public: {
+      baseURL: process.env.NUXT_PUBLIC_API_BASE,
+    }
+  },
   postcss: {
     plugins: {
       autoprefixer: {},
       tailwindcss: {},
     },
-  },
-  runtimeConfig: {
-    baseURL: process.env.NUXT_BASE_URL,
   },
   veeValidate: {
     autoImports: true,

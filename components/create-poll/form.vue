@@ -1,12 +1,14 @@
 <script setup lang="ts">
 export type CreatePollForm = {
-  dates: [Date, Date] | [Date]
+  anonymous: boolean
+  dates?: [Date, Date] | [Date]
   description: string
-  isAnonymous: boolean
-  isMultiple: boolean
+  multiple: boolean
   options: string[]
   title: string
 }
+
+defineProps<{ onSubmit: () => void }>()
 
 const newOption = ref('')
 const scheduled = ref(false)
@@ -39,7 +41,7 @@ watch(scheduled, () => (values.value.dates = undefined))
 </script>
 
 <template>
-  <ElForm label-position="top">
+  <ElForm label-position="top" @submit.prevent="onSubmit">
     <AppInput label="Poll title" name="title" />
     <AppInput label="Description" name="description" />
 
@@ -68,8 +70,8 @@ watch(scheduled, () => (values.value.dates = undefined))
     </div>
 
     <div class="flex gap-2">
-      <AppCheckbox name="isAnonymous"> Anonymous poll </AppCheckbox>
-      <AppCheckbox name="isMultiple"> Allow multiple choices </AppCheckbox>
+      <AppCheckbox name="anonymous"> Anonymous poll </AppCheckbox>
+      <AppCheckbox name="multiple"> Allow multiple choices </AppCheckbox>
       <ElCheckbox v-model="scheduled"> Schedule poll </ElCheckbox>
     </div>
 
@@ -82,5 +84,7 @@ watch(scheduled, () => (values.value.dates = undefined))
       :label="scheduled ? 'Range' : 'End date'"
       name="dates"
     />
+
+    <button type="submit" class="hidden"></button>
   </ElForm>
 </template>

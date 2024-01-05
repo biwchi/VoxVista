@@ -3,10 +3,17 @@ import type { FetchError } from 'oFetch'
 
 import { object, string } from 'yup'
 
+import type { DefaultResponseError } from '~/repository/types'
+
 type Form = {
   email: string
   nickname: string
   password: string
+}
+
+const title = {
+  login: 'Login',
+  register: 'Register',
 }
 
 const { method } = defineProps<{ method: 'login' | 'register' }>()
@@ -21,49 +28,50 @@ const validationSchema = object().shape({
   password: string().min(6).required('Password is required'),
 })
 
-const title = {
-  login: 'Login',
-  register: 'Register',
-}
+const error = ref<DefaultResponseError>()
 
-const token = useLocalStorage('token', '')
-const error = ref<FetchError>()
+const { init, token } = useUserStore()
+const { $api } = useNuxtApp()
+const { handleSubmit, setErrors } = useForm<Form>({ validationSchema })
 
-const { handleSubmit } = useForm<Form>({ validationSchema })
-
-const setError = (err: FetchError | null) => {
-  if (err) {
-    error.value = err
+const setError = (err: FetchError<DefaultResponseError> | null) => {
+  if (err?.data && (err.data satisfies DefaultResponseError)) {
+    console.log(err.data)
+    error.value = err.data
   }
 }
 
 const setToken = (data: { token: string } | null) => {
   if (data) {
     token.value = data.token
+    error.value = undefined
   }
 }
 
 const onSubmit = handleSubmit(async (values) => {
   if (method === 'login') {
-    const { data, error: loginError } = await useFetch('/api/auth/login', {
-      body: values,
-      method: 'POST',
-    })
+    const { data, error: loginError } = await $api.auth.login(values)
 
     setError(loginError.value)
     setToken(data.value)
   }
 
   if (method === 'register') {
-    const { data, error: registerError } = await useFetch(
-      '/api/auth/register',
-      { body: values, method: 'POST' },
-    )
+    const { data, error: registerError } = await $api.auth.register(values)
 
     setError(registerError.value)
     setToken(data.value)
   }
 
+  if (error.value) {
+    const errors =
+      'errors' in error.value ? error.value.errors : [error.value.message]
+      
+    setErrors({ email: errors[0] })
+    return
+  }
+
+  await init()
   modelValue.value = false
 })
 </script>
@@ -73,12 +81,14 @@ const onSubmit = handleSubmit(async (values) => {
     <ElDialog v-model="modelValue" width="500px" :title="title[method]">
       <ElForm label-position="top" @submit="onSubmit">
         <slot />
+
+        <button type="submit" class="hidden"></button>
       </ElForm>
 
       <template #footer>
         <ElButton type="primary" @click="onSubmit">
           {{ title[method] }}
-        </ElButton>ё
+        </ElButton>
       </template>
     </ElDialog>
   </ClientOnly>

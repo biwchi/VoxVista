@@ -1,8 +1,8 @@
 <script setup lang="ts">
 export type Option = {
+  id: number
   isChosen?: boolean
   label: string
-  value: string
   votes: number
 }
 
@@ -32,7 +32,7 @@ function isOptionSelected(option: Option) {
     return modelValue.value.includes(option)
   }
 
-  return modelValue.value === option
+  return modelValue.value?.id === option.id
 }
 
 function deleteOption(option: Option) {
@@ -71,7 +71,7 @@ function selectOption(option: Option) {
     <template v-if="!props.voted">
       <PollOptionsItem
         v-for="option in props.options"
-        :key="option.value"
+        :key="option.label"
         :option="option"
         :selected="isOptionSelected(option)"
         @select="selectOption"
@@ -81,7 +81,7 @@ function selectOption(option: Option) {
     <template v-else>
       <PollOptionsResultItem
         v-for="option in optionsWithPercentenge"
-        :key="option.value"
+        :key="option.label"
         :option="option"
       />
     </template>

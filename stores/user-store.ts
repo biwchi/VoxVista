@@ -5,31 +5,34 @@ export const useUserStore = defineStore('user', {
         return
       }
 
-      const { data: user, error } = await useFetch('/api/auth/user', {
-        body: {
-          token: this.token
-        },
-        method: 'POST',
-        server: false
-      })
+      const { $api } = useNuxtApp()
+      const { error, data } = await $api.auth.getCurrentUser()
+
       if (error.value) {
         return
       }
 
-      Object.assign(this.$state, user.value)
+      if (data.value) {
+        this.$state = data.value
+      }
     },
     logout() {
+      this.clearToken()
       this.$state = {
         nickname: '',
         email: '',
         id: 0,
       }
-
-      useLocalStorage('token', '').value = ''
-    }
+    },
+    setToken(token: string) {
+      this.token.value = token
+    },
+    clearToken() {
+      this.token.value = ''
+    },
   },
   getters: {
-    token: () => useLocalStorage('token', '').value,
+    token: () => useCookie('token', { watch: true }),
     isAuthenticated: (state) => state.id !== 0,
   },
   state: () => ({

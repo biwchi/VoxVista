@@ -1,4 +1,3 @@
-
 <template>
   <BaseAuthentication method="login">
     <AppInput label="Email" name="email"> Email </AppInput>

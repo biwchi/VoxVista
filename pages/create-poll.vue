@@ -2,6 +2,7 @@
 import { array, object, string } from 'yup'
 
 import type { CreatePollForm } from '~/components/create-poll/form.vue'
+import type { CreatePollRequest } from '~/repository/modules/PollModule/types';
 
 const validationSchema = object().shape({
   description: string().required('Description is required'),
@@ -9,25 +10,26 @@ const validationSchema = object().shape({
   title: string().required('Title is required'),
 })
 
+const { $api } = useNuxtApp()
 const { handleSubmit } = useForm<CreatePollForm>({
   initialValues: { options: ['', ''] },
   validationSchema,
 })
 
 const onSubmit = handleSubmit(async (values) => {
-  console.log(values)
+  const dates = values.dates || []
+  const startDate = dates[0] && dates[0].toISOString()
+  const endDate = dates[1] && dates[1].toISOString()
+  delete values.dates
 
-  const startDate = values.dates && values.dates[0]
-  const endDate = values.dates && values.dates[1]
-
-  const data = {
+  const data: CreatePollRequest = {
     ...values,
     endDate,
     options: values.options.map((option) => ({ label: option })),
     startDate,
   }
 
-  useFetch('/api/poll', { body: data, method: 'post' })
+  await $api.poll.createPoll(data)
 })
 </script>
 
@@ -37,10 +39,10 @@ const onSubmit = handleSubmit(async (values) => {
       <h1 class="text-2xl font-medium">Create a new poll</h1>
     </template>
 
-    <CreatePollForm />
+    <CreatePollForm @submit="onSubmit"/>
 
     <template #footer>
-      <ElButton class="w-full" type="primary" @click="onSubmit">
+      <ElButton class="w-full" native-type="submit" type="primary" @click="onSubmit">
         Create poll
       </ElButton>
     </template>
