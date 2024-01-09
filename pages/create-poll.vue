@@ -18,6 +18,7 @@ const { handleSubmit } = useForm<CreatePollForm>({
 
 const onSubmit = handleSubmit(async (values) => {
   const dates = values.dates || []
+
   const startDate = dates[0] && dates[0].toISOString()
   const endDate = dates[1] && dates[1].toISOString()
   delete values.dates

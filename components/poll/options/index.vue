@@ -19,17 +19,17 @@ const totalVotes = computed(() => {
   return props.options.reduce((acc, opt) => acc + opt.votes, 0)
 })
 
-const optionsWithPercentenge = computed(() => {
+const optionsWithPercentage = computed(() => {
   return props.options.map((option) => {
-    const percentenge = Math.round((option.votes / totalVotes.value) * 100)
+    const percentage = Math.round((option.votes / totalVotes.value) * 100)
 
-    return { ...option, percentenge }
+    return { ...option, percentage }
   })
 })
 
 function isOptionSelected(option: Option) {
   if (Array.isArray(modelValue.value)) {
-    return modelValue.value.includes(option)
+    return modelValue.value.some((o) => o.id === option.id)
   }
 
   return modelValue.value?.id === option.id
@@ -37,7 +37,7 @@ function isOptionSelected(option: Option) {
 
 function deleteOption(option: Option) {
   if (Array.isArray(modelValue.value)) {
-    const filteredOptions = modelValue.value.filter((o) => o !== option)
+    const filteredOptions = modelValue.value.filter((o) => o.id !== option.id)
 
     if (filteredOptions.length < 1) {
       modelValue.value = undefined
@@ -80,7 +80,7 @@ function selectOption(option: Option) {
 
     <template v-else>
       <PollOptionsResultItem
-        v-for="option in optionsWithPercentenge"
+        v-for="option in optionsWithPercentage"
         :key="option.label"
         :option="option"
       />

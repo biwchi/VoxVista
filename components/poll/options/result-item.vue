@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import type { Option } from './index.vue'
 
-const props = defineProps<{ option: Option & { percentenge: number } }>()
+const props = defineProps<{ option: Option & { percentage: number } }>()
 
-const lineWidth = `${props.option.percentenge}%`
+const lineWidth = `${props.option.percentage}%`
 </script>
 
 <template>
-  <div :key="option.value" class="flex h-full gap-2">
+  <div :key="option.label" class="flex h-full gap-2">
     <div class="py-1.5 text-right">
       <span class="block text-xs font-semibold">
-        {{ option.percentenge }}%
+        {{ option.percentage }}%
       </span>
 
       <ElIcon v-if="option.isChosen" class="!text-primary-500">

@@ -13,11 +13,9 @@ class FetchFactory {
     this.$fetch = createFetch({
       defaults: {
         headers: {
-          'Content-Type': 'application/json',
-        },
-        baseURL: configPublic.baseURL,
-        onRequest: this.onRequest,
-      },
+          'Content-Type': 'application/json'
+        }, baseURL: configPublic.baseURL, onRequest: this.onRequest
+      }
     })
   }
 
@@ -33,35 +31,23 @@ class FetchFactory {
   }
 
   protected patch<T>(url: string, data?: object, fetchOptions?: JsonOptions) {
-    return useAsyncData(() =>
-      this.$fetch<T>(url, {
-        method: 'PATCH',
-        body: data,
-        ...fetchOptions,
-      }),
-    )
+    return this.$fetch<T>(url, {
+      method: 'PATCH', body: data, ...fetchOptions
+    })
   }
 
   protected post<T>(url: string, data?: object, fetchOptions?: JsonOptions) {
-    return useAsyncData(() =>
-      this.$fetch<T>(url, {
-        method: 'POST',
-        body: data,
-        ...fetchOptions,
-      }),
-    )
+    return this.$fetch<T>(url, {
+      method: 'POST', body: data, ...fetchOptions
+    })
   }
 
   protected delete<T>(url: string, fetchOptions?: JsonOptions) {
-    return useAsyncData(() =>
-      this.$fetch<T>(url, { method: 'DELETE', ...fetchOptions }),
-    )
+    return this.$fetch<T>(url, { method: 'DELETE', ...fetchOptions })
   }
 
   protected get<T>(url: string, fetchOptions?: JsonOptions) {
-    return useAsyncData(() =>
-      this.$fetch<T>(url, { method: 'GET', ...fetchOptions }),
-    )
+    return this.$fetch<T>(url, { method: 'GET', ...fetchOptions })
   }
 }
 

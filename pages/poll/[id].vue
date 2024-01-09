@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { Option } from '~/components/poll/options/index.vue'
 import type { Poll } from '~/repository/modules/PollModule/types'
 import type { Modify } from '~/repository/types'
@@ -10,56 +10,35 @@ type ClientPoll = Modify<
   }
 >
 
-const $api = useNuxtApp().$api
+const { $api } = useNuxtApp()
 const route = useRoute()
 const id =
   route.params.id instanceof Array ? route.params.id[0] : route.params.id
 
 const selectedOption = ref<Option | Option[]>()
 
-const { data, pending, refresh } = await $api.poll.getPoll(id)
+const { data: pollData, pending, refresh } = await $api.poll.getPoll(id)
 
 const poll = computed<ClientPoll | undefined>(() => {
-  if (!data.value) {
+  console.log(pollData.value)
+  if (!pollData.value) {
     return
   }
 
   return {
-    ...data.value,
-    options: data.value.options.map((opt) => ({
+    ...pollData.value,
+    options: pollData.value.options.map((opt) => ({
       ...opt,
-      isChosen: false,
-    })),
+      isChosen: false
+    }))
   }
 })
-
-// const stats = computed(() => [
-//   {
-//     color: '!text-blue-500',
-//     icon: ElIconCheck,
-//     label: 'Votes',
-//     value: poll.value.votes,
-//   },
-//   {
-//     color: '!text-blue-500',
-//     icon: ElIconChatRound,
-//     label: 'Comments',
-//     value: poll.value.comments,
-//   },
-//   {
-//     color: '!text-yellow-500',
-//     icon: ElIconStar,
-//     label: 'Stars',
-//     value: poll.value.stars,
-//   },
-// ])
 
 async function vote() {
   if (!selectedOption.value || !poll.value) {
     return
   }
 
-  // prettier-ignore
   const selected = Array.isArray(selectedOption.value) ? selectedOption.value : [selectedOption.value]
   const selectedLables = selected.map((s) => s.label)
 
@@ -67,11 +46,13 @@ async function vote() {
 
   await $api.poll.voteForOption({
     optionsIds: selected.map((s) => s.id),
-    pollId: poll.value.id,
+    pollId: poll.value.id
   })
 
-  refresh()
+  await refresh()
 }
+
+watch(poll, () => console.log(poll.value))
 </script>
 
 <template>
@@ -79,12 +60,12 @@ async function vote() {
     <h1 class="text-2xl font-bold">{{ poll.title }}</h1>
     <p class="text-gray-500">{{ poll.description }}</p>
 
-    <div class="flex flex-col gap-4">
+    <div v-loading="pending" class="flex flex-col gap-4">
       <PollOptions
         v-model="selectedOption"
-        :voted="poll.voted"
-        :options="poll.options"
         :multiple="poll.multiple"
+        :options="poll.options"
+        :voted="poll.voted"
       />
 
       <ElButton
@@ -95,18 +76,6 @@ async function vote() {
         Vote
       </ElButton>
 
-      <!-- <ul class="flex gap-4 text-lg">
-        <li
-          v-for="stat in stats"
-          :key="stat.label"
-          class="flex items-center gap-2"
-          :class="stat.label == 'Stars' && 'flex-auto justify-end'"
-        >
-          <ElIcon :class="stat.color"><component :is="stat.icon" /></ElIcon>
-          <span>{{ stat.label }}: {{ stat.value }}</span>
-        </li>
-      </ul> -->
-
       <div class="space-y-2">
         <h1 class="text-xl font-medium">Comments</h1>
 
@@ -114,6 +83,4 @@ async function vote() {
       </div>
     </div>
   </div>
-
-  <p v-else>loading .......</p>
 </template>
