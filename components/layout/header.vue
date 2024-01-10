@@ -2,13 +2,18 @@
 const route = useRoute()
 const isTop = ref(false)
 
-const userStore = useUserStore()
+const { logout } = useUserStore()
+const { isAuthenticated, user } = storeToRefs(useUserStore())
 
-const links = [
-  { title: 'Create poll', to: '/create-poll' },
+const links = computed(() => [
+  {
+    isHidden: !isAuthenticated.value,
+    title: 'Create poll',
+    to: '/create-poll',
+  },
   { title: 'Explore polls', to: '/explore-polls' },
-  { title: 'My polls', to: '/my-polls' },
-]
+  { isHidden: !isAuthenticated.value, title: 'My polls', to: '/my-polls' },
+])
 
 const [isLoginModal, toggleLoginModal] = useToggle(false)
 const [isRegisterModal, toggleRegisterModal] = useToggle(false)
@@ -26,7 +31,7 @@ const isCurrent = (path: string) => {
           <h1 class="text-4xl font-bold">VoxVista</h1>
 
           <ul class="flex items-center justify-between gap-3">
-            <li v-for="(link, idx) in links" :key="idx">
+            <li v-for="(link, idx) in links" v-show="!link.isHidden" :key="idx">
               <NuxtLink :to="link.to">
                 <ElButton :type="isCurrent(link.to)" size="large">
                   {{ link.title }}
@@ -35,12 +40,12 @@ const isCurrent = (path: string) => {
             </li>
           </ul>
 
-          <div v-if="userStore.isAuthenticated" class="flex items-center gap-2">
+          <div v-if="isAuthenticated" class="flex items-center gap-2">
             <div class="flex flex-col">
               <span class="text-sm font-medium leading-none">{{
-                userStore.nickname
+                user.nickname
               }}</span>
-              <span class="text-xs text-gray-500">{{ userStore.email }}</span>
+              <span class="text-xs text-gray-500">{{ user.email }}</span>
             </div>
             <ElAvatar :icon="ElIconUserFilled" />
             <ElButton
@@ -48,7 +53,7 @@ const isCurrent = (path: string) => {
               :icon="ElIconSwitchButton"
               circle
               size="large"
-              @click="userStore.logout()"
+              @click="logout()"
             />
           </div>
 
