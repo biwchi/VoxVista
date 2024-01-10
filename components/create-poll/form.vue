@@ -1,7 +1,7 @@
 <script setup lang="ts">
 export type CreatePollForm = {
   anonymous: boolean
-  dates?: [Date, Date] | [Date]
+  dates?: [Date, Date] | Date
   description: string
   multiple: boolean
   options: string[]
