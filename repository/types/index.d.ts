@@ -9,6 +9,6 @@ export type DefaultResponseError =
       path: string
     }
   | {
-      errors: string[]
+      message: Record<string, string>
       status: number
     }
