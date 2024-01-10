@@ -1,7 +1,7 @@
 export const useUserStore = defineStore('user', {
   actions: {
     async init() {
-      if (this.isAuthenticated) {
+      if (this.isAuthenticated || !this.token.value) {
         return
       }
 
@@ -13,16 +13,20 @@ export const useUserStore = defineStore('user', {
       }
 
       if (data.value) {
-        this.$state = data.value
+        this.isAuthenticated = true
+        this.user = data.value
       }
     },
     logout() {
       this.clearToken()
-      this.$state = {
+      this.isAuthenticated = false
+      this.user = {
         nickname: '',
         email: '',
         id: 0,
       }
+
+      navigateTo('/explore-polls')
     },
     setToken(token: string) {
       this.token.value = token
@@ -31,13 +35,15 @@ export const useUserStore = defineStore('user', {
       this.token.value = ''
     },
   },
+  state: () => ({
+    user: {
+      nickname: '',
+      email: '',
+      id: 0,
+    },
+    isAuthenticated: false,
+  }),
   getters: {
     token: () => useCookie('token', { watch: true }),
-    isAuthenticated: (state) => state.id !== 0,
   },
-  state: () => ({
-    nickname: '',
-    email: '',
-    id: 0,
-  }),
 })
