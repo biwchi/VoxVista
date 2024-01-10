@@ -32,11 +32,12 @@ const error = ref<DefaultResponseError>()
 
 const { init, token } = useUserStore()
 const { $api } = useNuxtApp()
-const { handleSubmit, setErrors } = useForm<Form>({ validationSchema })
+const { handleSubmit, resetForm, setErrors } = useForm<Form>({
+  validationSchema,
+})
 
 const setError = (err: FetchError<DefaultResponseError> | null) => {
-  if (err?.data && (err.data satisfies DefaultResponseError)) {
-    console.log(err.data)
+  if (err?.data) {
     error.value = err.data
   }
 }
@@ -64,14 +65,17 @@ const onSubmit = handleSubmit(async (values) => {
   }
 
   if (error.value) {
-    const errors =
-      'errors' in error.value ? error.value.errors : [error.value.message]
-      
-    setErrors({ email: errors[0] })
+    if (typeof error.value.message === 'string') {
+      setErrors({ email: error.value.message })
+    } else {
+      setErrors(error.value.message)
+    }
+
     return
   }
 
   await init()
+  resetForm()
   modelValue.value = false
 })
 </script>

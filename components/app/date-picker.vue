@@ -20,7 +20,7 @@ const type = computed(() => {
     return 'datetimerange'
   }
 
-  if(props.time) {
+  if (props.time) {
     return 'datetime'
   }
 })
