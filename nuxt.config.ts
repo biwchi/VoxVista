@@ -11,13 +11,16 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       baseURL: process.env.NUXT_PUBLIC_API_BASE,
-    }
+    },
   },
   postcss: {
     plugins: {
       autoprefixer: {},
       tailwindcss: {},
     },
+  },
+  app: {
+    pageTransition: { mode: 'out-in', name: 'page' },
   },
   veeValidate: {
     autoImports: true,
