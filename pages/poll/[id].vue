@@ -11,6 +11,7 @@ type ClientPoll = Modify<
 >
 
 const { $api } = useNuxtApp()
+const { isAuthenticated } = storeToRefs(useUserStore())
 const route = useRoute()
 const id =
   route.params.id instanceof Array ? route.params.id[0] : route.params.id
@@ -20,7 +21,6 @@ const selectedOption = ref<Option | Option[]>()
 const { data: pollData, pending, refresh } = await $api.poll.getPoll(id)
 
 const poll = computed<ClientPoll | undefined>(() => {
-  console.log(pollData.value)
   if (!pollData.value) {
     return
   }
@@ -29,8 +29,8 @@ const poll = computed<ClientPoll | undefined>(() => {
     ...pollData.value,
     options: pollData.value.options.map((opt) => ({
       ...opt,
-      isChosen: false
-    }))
+      isChosen: false,
+    })),
   }
 })
 
@@ -39,20 +39,23 @@ async function vote() {
     return
   }
 
-  const selected = Array.isArray(selectedOption.value) ? selectedOption.value : [selectedOption.value]
+  const selected = Array.isArray(selectedOption.value)
+    ? selectedOption.value
+    : [selectedOption.value]
   const selectedLables = selected.map((s) => s.label)
 
   ElNotification.success(`Voted for ${selectedLables.join(', ')}!`)
 
   await $api.poll.voteForOption({
     optionsIds: selected.map((s) => s.id),
-    pollId: poll.value.id
+    pollId: poll.value.id,
   })
 
   await refresh()
 }
 
-watch(poll, () => console.log(poll.value))
+provide('pollId', id)
+watch(isAuthenticated, () => refresh())
 </script>
 
 <template>
@@ -69,6 +72,7 @@ watch(poll, () => console.log(poll.value))
       />
 
       <ElButton
+        v-if="isAuthenticated"
         :disabled="!selectedOption || poll.voted"
         type="primary"
         @click="vote"
@@ -76,11 +80,7 @@ watch(poll, () => console.log(poll.value))
         Vote
       </ElButton>
 
-      <div class="space-y-2">
-        <h1 class="text-xl font-medium">Comments</h1>
-
-        <PollComment />
-      </div>
+      <PollComments />
     </div>
   </div>
 </template>
