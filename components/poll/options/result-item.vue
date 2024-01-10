@@ -4,6 +4,14 @@ import type { Option } from './index.vue'
 const props = defineProps<{ option: Option & { percentage: number } }>()
 
 const lineWidth = `${props.option.percentage}%`
+
+const selectedPollOption = ref(0)
+const [showUserList, toggleUserList] = useToggle(false)
+
+function openUserList(pollOptionId: number) {
+  selectedPollOption.value = pollOptionId
+  toggleUserList()
+}
 </script>
 
 <template>
@@ -24,10 +32,16 @@ const lineWidth = `${props.option.percentage}%`
         <div
           :style="{ maxWidth: lineWidth }"
           class="h-1 animate-[appear_0.3s_ease-in] cursor-pointer rounded-full bg-primary-500"
+          @click="openUserList(option.id)"
         ></div>
       </ElTooltip>
     </div>
   </div>
+
+  <PollOptionsUserList
+    v-model="showUserList"
+    :poll-option-id="selectedPollOption"
+  />
 </template>
 
 <style>

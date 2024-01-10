@@ -12,6 +12,7 @@ type Props = {
   voted?: boolean
 }
 
+const { isAuthenticated } = storeToRefs(useUserStore())
 const props = defineProps<Props>()
 const modelValue = defineModel<Option | Option[]>()
 
@@ -68,7 +69,7 @@ function selectOption(option: Option) {
 
 <template>
   <div class="flex flex-col gap-2">
-    <template v-if="!props.voted">
+    <template v-if="isAuthenticated && !props.voted">
       <PollOptionsItem
         v-for="option in props.options"
         :key="option.label"
