@@ -1,16 +1,18 @@
 <script setup lang="ts">
 const { $api } = useNuxtApp()
-const { data: polls, pending } = await $api.poll.getPolls()
-
-watch(polls, () => console.log(polls.value))
+const { data: polls } = await $api.poll.getPolls()
 </script>
 
 <template>
-  <div v-if="!pending && polls" class="space-y-4">
+  <div v-if="polls && polls.length" class="space-y-4">
     <PollCard
       v-for="poll in polls"
       :key="poll.id"
       :poll="poll"
     />
+  </div>
+
+  <div v-else>
+    <ElEmpty :description="'No polls found =('"/>
   </div>
 </template>
