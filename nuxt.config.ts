@@ -7,6 +7,7 @@ export default defineNuxtConfig({
     '@element-plus/nuxt',
     '@vee-validate/nuxt',
     '@pinia/nuxt',
+    '@nuxt/test-utils/module',
   ],
   runtimeConfig: {
     public: {
