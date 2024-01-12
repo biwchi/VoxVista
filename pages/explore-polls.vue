@@ -4,6 +4,8 @@ const { data: polls } = await $api.poll.getPolls()
 </script>
 
 <template>
+  polls - {{ polls }}
+
   <div v-if="polls && polls.length" class="space-y-4">
     <PollCard
       v-for="poll in polls"
